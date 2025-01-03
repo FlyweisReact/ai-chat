@@ -1,0 +1,136 @@
+/** @format */
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.page_container {
+  height: 100vh;
+  overflow: hidden;
+  /* background: linear-gradient(
+    to bottom,
+    var(--primary-color) 90%,
+    var(--secendory-color) 10%,
+    var(--primary-color) 50%
+  ); */
+  padding: 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.page_container::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  background-image: url("https://img.freepik.com/free-photo/glowing-molecular-structure-futuristic-galaxy-backdrop-generated-by-ai_188544-27827.jpg?t=st=1735893226~exp=1735896826~hmac=d5704ce607c746acadb03317c0147298427a3aac314a289d4ae4e08a6c53703d&w=1380");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  filter: blur(6px);
+  z-index: -1;
+}
+
+.header {
+  width: 100%;
+}
+
+.header .logo_container {
+  max-width: 200px;
+}
+.header .logo_container img {
+  width: 100%;
+  height: auto;
+}
+
+.header .descriptive_text {
+  font-size: var(--font-size-large);
+  color: #fff;
+  font-family: Montserrat;
+  margin-top: 10px;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.content .thumbnail {
+  max-width: 300px;
+  width: auto;
+  height: auto;
+}
+
+.content .text {
+  font-size: var(--font-size-small);
+  font-family: Quicksand;
+  color: #fff;
+  max-width: 1000px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.content .btn_container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+.content .btn_container button {
+  padding: 10px;
+  width: auto;
+  outline: none;
+  cursor: pointer;
+  font-size: var(--font-size-smaller);
+}
+
+.content .btn_container button.start {
+  background-color: #fff;
+  border: 1px solid #fff;
+  font-family: Quicksand;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+}
+.content .btn_container button.login_btn {
+  background-color: transparent;
+  border: 1px solid #fff;
+  font-family: Quicksand;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .page_container{
+    padding: 20px;
+  }
+  .header .logo_container{
+    max-width: 120px;
+  }
+  .header .descriptive_text{
+    font-size: var(--font-size-small);
+  }
+  .content .thumbnail{
+    max-width: 200px;
+  }
+  .content .text {
+    font-size: var(--font-size-extra-small);
+  }
+}
