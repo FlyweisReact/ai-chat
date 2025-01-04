@@ -1,16 +1,76 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import style from "../css/chat.module.css";
 import Sidebar from "../components/Sidebar";
 import { FaArrowUp } from "react-icons/fa6";
 import { BsMenuButton } from "react-icons/bs";
 import { logo } from "../asset";
+import { PulseLoader } from "react-spinners";
+import { TypeAnimation } from "react-type-animation";
+
+const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
 const ChatBot = () => {
   const [show, setShow] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [isNewChat, setNewChat] = useState(false);
+  const [isNewChat, setNewChat] = useState(true);
+  const [question, setQuestion] = useState("");
+  const [loading, setLoading] = useState(false);
+  const oldChat = JSON.parse(localStorage.getItem("chat"));
+  const [conversations, setConversations] = useState(oldChat || []);
+  const [currentAiMessage, setCurrentAiMessage] = useState("");
+
+  const fetchChatGPTResponse = async () => {
+    setLoading(true);
+    setQuestion("");
+    try {
+      const response = await fetch(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4",
+            messages: [{ role: "user", content: question }],
+          }),
+        }
+      );
+      const data = await response.json();
+      const aiAnswer =
+        data?.choices?.[0]?.message?.content || "No response found";
+      setConversations((prevHistory) => [
+        ...prevHistory,
+        { role: "user", content: question },
+        { role: "ai", content: aiAnswer },
+      ]);
+      setCurrentAiMessage(aiAnswer);
+    } catch (error) {
+      console.error("Error fetching ChatGPT response:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (conversations?.length > 0) {
+      localStorage.setItem("chat", JSON.stringify(conversations));
+    }
+  }, [conversations]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (question.trim()) {
+      setNewChat(false);
+      fetchChatGPTResponse();
+      setNewChat(false);
+    } else {
+      alert("Please enter a question!");
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -29,6 +89,22 @@ const ChatBot = () => {
       setShow(false);
     }
   }, [isMobile]);
+
+  const chatContainerRef = useRef(null);
+
+  const scroolToLastChat = () => {
+    chatContainerRef.current.scrollTo({
+      top: chatContainerRef.current.scrollHeight,
+      behavior: "smooth", // Add smooth scrolling
+    });
+  };
+
+  // Scroll to the last message on update
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      scroolToLastChat();
+    }
+  }, [conversations]);
 
   return (
     <section className={style.main_container}>
@@ -61,166 +137,83 @@ const ChatBot = () => {
             className={style.user_avatar}
           />
         </div>
+
         {isNewChat && (
           <div className={style.chats}>
             <h3 className={style.headline}>What can I help with?</h3>
 
-            <div className={style.search_bar}>
-              <input type="text" placeholder="Ask me anything" />
-              <span className={style.search} onClick={() => setNewChat(false)}>
+            <form className={style.search_bar} onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Ask me anything"
+                onChange={(e) => setQuestion(e.target.value)}
+                value={question}
+                required
+              />
+              <button className={style.search} type="submit">
                 <FaArrowUp />
-              </span>
-            </div>
+              </button>
+            </form>
           </div>
         )}
 
         {!isNewChat && (
           <div className={`${style.chats} ${style.ai_chats}`}>
-            <div className={style.chats_list}>
-              <p className={style.user_text}>React: Theoretical Overview</p>
-              <div className={style.ai_text}>
-                <h3>React: Theoretical Overview</h3> <br />
-                <p>
-                  <strong>React</strong> is a{" "}
-                  <strong>JavaScript library</strong> developed by{" "}
-                  <strong>Meta</strong> (formerly Facebook) for building{" "}
-                  <strong>user interfaces</strong>. It’s especially well-suited
-                  for applications where data changes frequently and needs to be
-                  efficiently updated in the UI.
-                </p>
-                <br />
-                <hr />
-                <br />
-                <ol>
-                  <li>
-                    <p>
-                      <strong>Component-Based Architecture</strong>
-                    </p>
-                    <br />
-                    <ul>
-                      <li>
-                        React applications are built from components, which are
-                        independent, reusable pieces of UI.
-                      </li>
-                      <br />
-                      <li>Components can be functional or class-based.</li>
-                    </ul>
-                  </li>
-                  <br />
-                  <li>
-                    <p>
-                      <strong>Declarative Programming</strong>
-                    </p>{" "}
-                    <br />
-                    <ul>
-                      <li>
-                        Developers describe what the UI should look like, and
-                        React updates the interface automatically when data
-                        changes.
-                      </li>
-                    </ul>
-                  </li>{" "}
-                  <br />
-                  <li>
-                    <p>
-                      <strong>Virtual DOM</strong>
-                    </p>{" "}
-                    <br />
-                    <ul>
-                      <li>
-                        React maintains a virtual copy of the DOM. Changes are
-                        first applied to the virtual DOM, and then React
-                        efficiently updates only the parts of the real DOM that
-                        need changing.
-                      </li>
-                    </ul>
-                  </li>{" "}
-                  <br />
-                  <li>
-                    <p>
-                      <strong>Unidirectional Data Flow</strong>
-                    </p>{" "}
-                    <br />
-                    <ul>
-                      <li>
-                        React uses a top-down approach to pass data via{" "}
-                        <strong>props</strong> (short for properties), ensuring
-                        better predictability and easier debugging.
-                      </li>
-                    </ul>
-                  </li>{" "}
-                  <br />
-                  <li>
-                    <p>
-                      <strong>JSX (JavaScript XML)</strong>
-                    </p>{" "}
-                    <br />
-                    <ul>
-                      <li>
-                        JSX is a syntax extension that allows mixing HTML-like
-                        code with JavaScript, making it easier to define UIs
-                        while leveraging JavaScript’s power.
-                      </li>
-                    </ul>
-                  </li>{" "}
-                  <br />
-                  <li>
-                    <p>
-                      <strong>State Management</strong>
-                    </p>{" "}
-                    <br />
-                    <ul>
-                      <li>
-                        Components can maintain their own local state using the{" "}
-                        <code>useState</code> hook or class-based state
-                        management.
-                      </li>{" "}
-                      <br />
-                      <li>
-                        For global state, libraries like Redux or Context API
-                        are used.
-                      </li>
-                    </ul>
-                  </li>{" "}
-                  <br />
-                  <li>
-                    <p>
-                      <strong>Lifecycle</strong>
-                    </p>{" "}
-                    <br />
-                    <ul>
-                      <li>
-                        Components have lifecycles, which include mounting
-                        (initialization), updating (state/props change), and
-                        unmounting (removal).
-                      </li>
-                    </ul>
-                  </li>{" "}
-                  <br />
-                  <li>
-                    <p>
-                      <strong>Hooks</strong>
-                    </p>{" "}
-                    <br />
-                    <ul>
-                      <li>
-                        Introduced in React 16.8, hooks like{" "}
-                        <code>useState</code> and <code>useEffect</code> enable
-                        state and side-effects in functional components.
-                      </li>
-                    </ul>
-                  </li>
-                </ol>
-              </div>
+            <div className={style.chats_list} ref={chatContainerRef}>
+              {conversations?.map((item, index) => {
+                if (!item?.content) return null;
+
+                const isLastAiMessage =
+                  item?.role === "ai" &&
+                  currentAiMessage &&
+                  index === conversations?.length - 1;
+
+                if (isLastAiMessage) return null;
+
+                return item?.role === "user" ? (
+                  <p className={style.user_text} key={`user${index}`}>
+                    {item?.content}
+                  </p>
+                ) : (
+                  <div
+                    className={style.ai_text}
+                    key={`ai${index}`}
+                    dangerouslySetInnerHTML={{
+                      __html: item?.content?.replace(/\n/g, "<br/>"),
+                    }}
+                  />
+                );
+              })}
+
+              {currentAiMessage && (
+                <TypeAnimation
+                  sequence={[currentAiMessage]}
+                  wrapper="div"
+                  speed={70}
+                  cursor={false}
+                  className={style.ai_text}
+                  key={currentAiMessage}
+                />
+              )}
             </div>
 
             <div className={style.search_container}>
-              <div className={style.search_bar}>
-                <input type="text" placeholder="Ask me anything" />
-                <span className={style.search} onClick={() => setNewChat(true)}>
-                  <FaArrowUp />
-                </span>
-              </div>
+              <form className={style.search_bar} onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="Ask me anything"
+                  onChange={(e) => setQuestion(e.target.value)}
+                  value={question}
+                  required
+                />
+                {loading ? (
+                  <PulseLoader color="#fff" size={5} />
+                ) : (
+                  <button className={style.search} type="submit">
+                    <FaArrowUp />
+                  </button>
+                )}
+              </form>
             </div>
           </div>
         )}
