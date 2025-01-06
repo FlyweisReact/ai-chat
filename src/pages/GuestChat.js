@@ -1,63 +1,31 @@
 /** @format */
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import style from "../css/chat.module.css";
-import Sidebar from "../components/Sidebar";
+import style from "../css/guestChat.module.css";
+import React, { useEffect, useRef, useState } from "react";
 import { FaArrowUp } from "react-icons/fa6";
-import { BsMenuButton } from "react-icons/bs";
 import { logo } from "../asset";
 import { PulseLoader } from "react-spinners";
 import { TypeAnimation } from "react-type-animation";
-import { useDispatch, useSelector } from "react-redux";
-import { isAuthenticated, LOGOUT } from "../store/authSlice";
-import { getApi, postApi, showMsg } from "../Api/Api";
-import endPoints from "../Api/apiConfig";
-import { useNavigate } from "react-router-dom";
-import { ConfigProvider, Dropdown } from "antd";
-import { IoIosLogOut } from "react-icons/io";
 import axios from "axios";
+import { showMsg } from "../Api/Api";
+import { useNavigate } from "react-router-dom";
 
 const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
-const userId = `Qadir_Ali`;
 
-const ChatBot = () => {
-  const isLoggedIn = useSelector(isAuthenticated);
-  const dispatch = useDispatch();
+const GuestChat = () => {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState(null);
-  const [show, setShow] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [isNewChat, setNewChat] = useState(true);
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
-  const today = new Date().toISOString().split("T")[0]; // Get today's date
-  const chatData = JSON.parse(localStorage.getItem("chatData")) || {};
-  const userChats = chatData[userId]?.[today] || [];
-  const [conversations, setConversations] = useState(userChats);
+  const [conversations, setConversations] = useState([]);
   const [currentAiMessage, setCurrentAiMessage] = useState("");
-
-  const logoutHandler = () => {
-    dispatch(LOGOUT());
-    showMsg("", "Logged Out Successfully !", "success");
-    navigate("/");
-  };
-
-  const saveChatData = (data) => {
-    const payload = {
-      messages: data,
-    };
-
-    postApi(endPoints.chat.saveChat, payload, {
-      hideErr: true,
-    });
-  };
 
   const payload = {
     model: "gpt-4",
     messages: [{ role: "user", content: question }],
   };
 
-  const fetchChatGPTResponse = async () => {
+  const askQuestion = async () => {
     setLoading(true);
     try {
       const response = await axios.post(
@@ -69,71 +37,37 @@ const ChatBot = () => {
           },
         }
       );
-
       const aiAnswer =
         response?.data?.choices?.[0]?.message?.content || "No response found";
-
       const newConversations = [
         ...conversations,
         { role: "user", content: question },
         { role: "ai", content: aiAnswer },
       ];
-      const convo = [
-        {
-          senderType: "User",
-          content: question,
-          date: today,
-        },
-        {
-          senderType: "Ai",
-          content: aiAnswer,
-          date: today,
-        },
-      ];
       setQuestion("");
       setConversations(newConversations);
       setCurrentAiMessage(aiAnswer);
-      saveChatData(convo);
     } catch (error) {
-      console.error("Error fetching ChatGPT response:", error);
+      showMsg(
+        "",
+        "We encountered an issue. Please refresh the page or try again later.",
+        "danger"
+      );
+      setCurrentAiMessage("No Response found");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (conversations?.length > 0) {
-      localStorage.setItem("chat", JSON.stringify(conversations));
-    }
-  }, [conversations]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (question.trim()) {
       setNewChat(false);
-      fetchChatGPTResponse();
+      askQuestion();
     } else {
       alert("Please enter a question!");
     }
   };
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isMobile) {
-      setShow(false);
-    }
-  }, [isMobile]);
 
   const chatContainerRef = useRef(null);
 
@@ -151,84 +85,30 @@ const ChatBot = () => {
     }
   }, [conversations]);
 
-  const fetchProfile = useCallback(() => {
-    if (isLoggedIn) {
-      getApi(endPoints.auth.getProfile, {
-        setResponse: setProfile,
-      });
-    }
-  }, [isLoggedIn]);
-
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
-
-  // Menu Options
-  const menuOptions = [
-    {
-      label: (
-        <button
-          className={style.log_out_btn}
-          type="button"
-          onClick={() => logoutHandler()}
-        >
-          <IoIosLogOut color="#fff" size={20} />
-          Log out
-        </button>
-      ),
-      key: "0",
-    },
-  ];
-
-
-  
-
   return (
     <section className={style.main_container}>
-      {isMobile ? (
-        <Sidebar setShow={setShow} show={show} setNewChat={setNewChat} />
-      ) : (
-        show && (
-          <Sidebar setShow={setShow} show={show} setNewChat={setNewChat} />
-        )
-      )}
-
       <section className={`${style.remaning_content} `}>
         <div className={style.header}>
           <div>
-            {!show && (
-              <BsMenuButton
-                size={16}
-                color="#fff"
-                onClick={() => setShow(!show)}
-              />
-            )}
-            <img
-              src={logo}
-              alt=""
-              className={style.logo}
-              onClick={() => navigate("/")}
-            />
+            <img src={logo} alt="" className={style.logo} />
           </div>
 
-          <ConfigProvider
-            theme={{
-              token: {
-                colorBgElevated: "#2f2f2f",
-              },
-              components: {
-                Dropdown: {
-                  paddingBlock: 2,
-                },
-              },
-            }}
-          >
-            <Dropdown menu={{ items: menuOptions }} trigger={["click"]}>
-              <div className={style.user_icon}>
-                {profile?.data?.user?.email?.slice(0, 1)}
-              </div>
-            </Dropdown>
-          </ConfigProvider>
+          <div className={style.auth_btns}>
+            <button
+              className={style.login_btn}
+              type="button"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </button>
+            <button
+              className={style.signup_btn}
+              type="button"
+              onClick={() => navigate("/signup")}
+            >
+              Signup
+            </button>
+          </div>
         </div>
 
         {isNewChat && (
@@ -244,7 +124,7 @@ const ChatBot = () => {
                 required
               />
               <button className={style.search} type="submit">
-                <FaArrowUp />
+                <FaArrowUp color="#fff" />
               </button>
             </form>
           </div>
@@ -300,10 +180,10 @@ const ChatBot = () => {
                   required
                 />
                 {loading ? (
-                  <PulseLoader color="#fff" size={5} />
+                  <PulseLoader color="#000" size={5} />
                 ) : (
                   <button className={style.search} type="submit">
-                    <FaArrowUp />
+                    <FaArrowUp color="#fff" />
                   </button>
                 )}
               </form>
@@ -315,4 +195,4 @@ const ChatBot = () => {
   );
 };
 
-export default ChatBot;
+export default GuestChat;

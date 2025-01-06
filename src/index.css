@@ -24,3 +24,7 @@ body {
   --font-size-extra-small: 14px; /* Extra small font size */
   --font-size-xs-small: 12px; /* Smallest font size */
 }
+
+.rnc__notification-message{
+  font-family: Quicksand !important;
+}

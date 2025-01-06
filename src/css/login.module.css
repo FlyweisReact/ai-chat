@@ -1,0 +1,118 @@
+/** @format */
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.page_container {
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--primary-color);
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.page_container .logo_container {
+  width: 100%;
+  background-color: var(--primary-color);
+  padding: 20px;
+}
+.page_container .logo_container img {
+  width: 120px;
+  display: block;
+  margin: auto;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.form_container {
+  flex: 1 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 80px;
+}
+
+.input_group {
+  position: relative;
+  margin-bottom: 25px;
+  width: 320px;
+}
+
+.input_group input {
+  width: 100%;
+  border-radius: 7px;
+  font-size: var(--font-size-smaller);
+  border: 1px solid #686868;
+  background: transparent;
+  color: #686868;
+  outline: none;
+  line-height: 1.1;
+  height: 52px;
+  font-family: Quicksand;
+  padding: 0 20px;
+  box-sizing: border-box;
+  font-weight: 500;
+}
+.input_group label {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  color: #686868;
+  font-size: var(--font-size-smaller);
+  pointer-events: none;
+  transition: 0.3s;
+  font-family: Quicksand;
+  font-weight: 500;
+}
+input:focus {
+  border: 1px solid #10a37f;
+}
+input:focus ~ label,
+input:valid ~ label {
+  top: 0;
+  left: 15px;
+  font-size: var(--font-size-extra-small);
+  padding: 0 2px;
+  background: #fff;
+  color: #10a37f;
+}
+
+.headline {
+  font-size: var(--font-size-large);
+  color: #212121;
+  font-family: Montserrat;
+  font-weight: 500;
+  padding: 40px 20px;
+}
+
+.submitBtn {
+  width: 320px;
+  color: #fff;
+  border: 1px solid var(--secendory-color);
+  background-color: var(--secendory-color);
+  border-radius: 6px;
+  height: 50px;
+  cursor: pointer;
+  font-size: var(--font-size-small);
+  font-family: Quicksand;
+  font-weight: 500;
+  margin-bottom: 25px;
+}
+
+.register_link {
+  color: #2f2f2f;
+  font-family: Quicksand;
+  font-size: var(--font-size-extra-small);
+  font-weight: 500;
+  text-decoration: none;
+}
+.register_link span {
+  color: var(--secendory-color);
+}

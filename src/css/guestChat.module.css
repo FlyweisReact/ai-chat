@@ -12,16 +12,15 @@
   gap: 0px;
   overflow: hidden;
   position: relative;
-  background-color: #212121;
+  background-color: #fff;
 }
 
 .remaning_content {
   flex: 1;
-  background-color: #212121;
+  background-color: #fff;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border: 1px solid #212121;
 }
 
 .chats {
@@ -39,14 +38,14 @@
 .chats .headline {
   font-size: var(--font-size-large);
   font-family: Montserrat;
-  color: #fff;
-  font-weight: 500;
+  color: #0d0d0d;
+  font-weight: 600;
 }
 
 .chats .search_bar {
   width: 100%;
-  background-color: #2f2f2f;
-  border: 1px solid #2f2f2f;
+  background-color: rgb(244 244 244);
+  border: 1px solid rgb(244 244 244);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -62,7 +61,7 @@
   outline: none;
   border: none;
   background-color: transparent;
-  color: #fff;
+  color: #0d0d0d;
   font-family: Quicksand;
   font-size: var(--font-size-smaller);
   font-weight: 500;
@@ -77,10 +76,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fff;
+  background-color: #0d0d0d;
   border-radius: 100%;
   cursor: pointer;
-  border: 1px solid #fff;
+  border: 1px solid #0d0d0d;
   outline: none;
 }
 
@@ -94,8 +93,8 @@
 
 .chats_list .user_text {
   font-size: var(--font-size-extra-small);
-  color: #fff;
-  border: 1px solid #303030;
+  color: #0d0d0d;
+  border: 1px solid #e8e8e8;
   max-width: 70%;
   width: auto;
   align-self: flex-end;
@@ -103,10 +102,10 @@
   font-weight: 500;
   padding: 10px 20px;
   border-radius: 50px;
-  background-color: #303030;
+  background-color: #e8e8e8;
 }
 .chats_list .ai_text {
-  color: #fff;
+  color: #0d0d0d;
   border: none;
   max-width: 100%;
   width: auto;
@@ -144,7 +143,7 @@
   max-height: calc(100vh - 300px);
 }
 .ai_chats .search_container {
-  background-color: #212121;
+  background-color: transparent;
   width: 100%;
   padding: 60px 0px;
   position: sticky;
@@ -158,6 +157,7 @@
   padding: 10px 20px;
   display: flex;
   align-items: center;
+  background-color: var(--primary-color);
   justify-content: space-between;
 }
 
@@ -167,15 +167,6 @@
 .header .logo {
   width: 80px;
   object-fit: contain;
-  cursor: pointer;
-}
-.header .user_avatar {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  object-position: top;
-  border-radius: 100%;
-  align-items: flex-end;
 }
 
 .header div {
@@ -184,38 +175,26 @@
   gap: 10px;
 }
 
-.user_icon {
-  width: 40px;
-  height: 40px;
-  border: 1px solid rgb(19, 144, 212);
-  color: #fff;
-  background-color: rgb(19, 144, 212);
-  border-radius: 100%;
+.auth_btns {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: var(--font-size-smaller);
-  font-family: Quicksand;
-  font-weight: 600;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.log_out_btn{
-  width: 278px;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  font-family: Quicksand;
-  font-size: var(--font-size-smaller);
-  color: #fff;
-  cursor: pointer;
   gap: 10px;
 }
-.log_out_btn:hover{
-  background-color: #424242;
-  border-radius: 5px;
+.auth_btns .login_btn {
+  background-color: var(--secendory-color);
+  border: 1px solid var(--secendory-color);
+  color: #fff;
+}
+.auth_btns .signup_btn {
+  background-color: #fff;
+  border: 1px solid #fff;
+  color: #0d0d0d;
+}
+.auth_btns button {
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: var(--font-size-extra-small);
+  font-family: Quicksand;
+  font-weight: 500;
+  cursor: pointer;
 }

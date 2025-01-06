@@ -5,9 +5,13 @@ import style from "../css/Home.module.css";
 import { chatBot, logo } from "../asset";
 import { FaArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { isAuthenticated } from "../store/authSlice";
 
 const Home = () => {
   const navigate = useNavigate();
+  const isLoggedIn = useSelector(isAuthenticated);
+
   return (
     <section className={style.page_container}>
       <header className={style.header}>
@@ -35,11 +39,26 @@ const Home = () => {
           <button
             className={style.start}
             type="button"
-            onClick={() => navigate("/chat-bot")}
+            onClick={() => navigate(isLoggedIn ? "/chat-bot" : "/guest-chat")}
           >
             Start with AI <FaArrowRight />{" "}
           </button>
-          <button className={style.login_btn}>Login</button>
+          {!isLoggedIn && (
+            <>
+              <button
+                className={style.login_btn}
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </button>
+              <button
+                className={style.login_btn}
+                onClick={() => navigate("/signup")}
+              >
+                Signup
+              </button>
+            </>
+          )}
         </div>
       </div>
     </section>
