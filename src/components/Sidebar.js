@@ -7,7 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import { SiCompilerexplorer } from "react-icons/si";
 import { BsMenuButton } from "react-icons/bs";
 
-const Sidebar = ({ setShow, show, setNewChat }) => {
+const Sidebar = ({ setShow, show, setNewChat ,clearChat }) => {
   return (
     <section className={`${style.sidebar} ${show ? style.show : ""} `}>
       <div className={style.menu_bar}>
@@ -19,13 +19,13 @@ const Sidebar = ({ setShow, show, setNewChat }) => {
           <FaPlus size={14} />
           New Chat
         </button>
-        <button>
+        <button onClick={() =>clearChat()}>
           <SiCompilerexplorer size={14} />
           Explore
         </button>
       </div>
 
-      <div className={style.remaining_btn}>
+      {/* <div className={style.remaining_btn}>
         <div className={style.menu}>
           <p className={style.heading}>Today</p>
           <button className={`${style.menu_btn} ${style.active}`}>
@@ -60,7 +60,7 @@ const Sidebar = ({ setShow, show, setNewChat }) => {
           <button className={style.menu_btn}>Create react app 18</button>
           <button className={style.menu_btn}>Create react app 18</button>
         </div>
-      </div>
+      </div> */}
     </section>
   );
 };

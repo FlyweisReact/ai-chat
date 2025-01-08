@@ -18,7 +18,6 @@ import { IoIosLogOut } from "react-icons/io";
 import axios from "axios";
 
 const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
-const userId = `Qadir_Ali`;
 
 const ChatBot = () => {
   const isLoggedIn = useSelector(isAuthenticated);
@@ -31,9 +30,7 @@ const ChatBot = () => {
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
   const today = new Date().toISOString().split("T")[0]; // Get today's date
-  const chatData = JSON.parse(localStorage.getItem("chatData")) || {};
-  const userChats = chatData[userId]?.[today] || [];
-  const [conversations, setConversations] = useState(userChats);
+  const [conversations, setConversations] = useState([]);
   const [currentAiMessage, setCurrentAiMessage] = useState("");
 
   const logoutHandler = () => {
@@ -180,16 +177,28 @@ const ChatBot = () => {
     },
   ];
 
-
-  
+  const clearChat = () => {
+    setConversations([]);
+    setCurrentAiMessage("")
+  };
 
   return (
     <section className={style.main_container}>
       {isMobile ? (
-        <Sidebar setShow={setShow} show={show} setNewChat={setNewChat} />
+        <Sidebar
+          setShow={setShow}
+          show={show}
+          setNewChat={setNewChat}
+          clearChat={clearChat}
+        />
       ) : (
         show && (
-          <Sidebar setShow={setShow} show={show} setNewChat={setNewChat} />
+          <Sidebar
+            setShow={setShow}
+            show={show}
+            setNewChat={setNewChat}
+            clearChat={clearChat}
+          />
         )
       )}
 
