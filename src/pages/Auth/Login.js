@@ -1,8 +1,8 @@
 /** @format */
 
 import React, { useState } from "react";
-import css from "../../css/login.module.css";
-import { logo } from "../../asset";
+import style from "../../css/login.module.css";
+import { apple_icon, google_icon, logo, outlook_icon } from "../../asset";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { postApiWithRedux } from "../../Api/Api";
@@ -36,46 +36,57 @@ const Login = () => {
   };
 
   return (
-    <section className={css.page_container}>
-      <div className={css.logo_container}>
+    <section className={style.page_container}>
+      <div className={style.logo_container}>
         <Link to="/">
           <img src={logo} alt="Logo" />
         </Link>
       </div>
 
-      <form className={css.form_container} onSubmit={LoginHandler}>
-        <h1 className={css.headline}>Welcome back</h1>
+      <div className={style.content}>
+        <form className={style.glass_effect} onSubmit={LoginHandler}>
+          <h1 className={style.headline}>Welcome Back!</h1>
 
-        <div className={css.input_group}>
-          <input
-            type="text"
-            required
-            spellCheck="false"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <label>Email address</label>
-        </div>
+          <div className={style.input_group}>
+            <label>Email or Phone Number</label>
+            <input
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <div className={css.input_group}>
-          <input
-            type="password"
-            required
-            spellCheck="false"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-          />
-          <label>Password</label>
-        </div>
+          <div className={style.input_group}>
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className={style.forget_password}>
+            <p>Forgot Password ?</p>
+          </div>
 
-        <button className={css.submitBtn} type="submit">
-          {loading ? <ClipLoader color="#fff" /> : "Continue"}
-        </button>
+          <button className={style.submit_btn} type="submit">
+            {loading ? <ClipLoader color="#fff" /> : "Continue"}
+          </button>
 
-        <Link className={css.register_link} to={"/signup"}>
-          Don't have an account? <span>Sign up</span>
-        </Link>
-      </form>
+          <p className={style.or}>Or Login With</p>
+
+          <div className={style.more_options}>
+            <img src={google_icon} alt="" />
+            <img src={apple_icon} alt="" />
+            <img src={outlook_icon} alt="" />
+          </div>
+
+          <Link className={style.register_link} to={"/signup"}>
+            Don't have an account? <span>Sign up</span>
+          </Link>
+        </form>
+      </div>
     </section>
   );
 };

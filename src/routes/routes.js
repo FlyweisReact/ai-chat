@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Auth/Login";
 import Signup from "../pages/Auth/Signup";
 import GuestChat from "../pages/GuestChat";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const routes = [
   {
@@ -13,7 +14,11 @@ const routes = [
   },
   {
     path: "/chat-bot",
-    element: <ChatBot />,
+    element: (
+      <ProtectedRoute>
+        <ChatBot />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/login",

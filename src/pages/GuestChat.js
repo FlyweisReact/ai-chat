@@ -2,13 +2,16 @@
 
 import style from "../css/guestChat.module.css";
 import React, { useEffect, useRef, useState } from "react";
-import { FaArrowUp } from "react-icons/fa6";
-import { logo } from "../asset";
+import { logo, star_icon } from "../asset";
 import { PulseLoader } from "react-spinners";
 import { TypeAnimation } from "react-type-animation";
 import axios from "axios";
 import { showMsg } from "../Api/Api";
 import { useNavigate } from "react-router-dom";
+import { BiCategoryAlt } from "react-icons/bi";
+import { FiPlus } from "react-icons/fi";
+import { GoHistory } from "react-icons/go";
+import { BsFillSendFill } from "react-icons/bs";
 
 const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
@@ -86,111 +89,140 @@ const GuestChat = () => {
   }, [conversations]);
 
   return (
-    <section className={style.main_container}>
-      <section className={`${style.remaning_content} `}>
-        <div className={style.header}>
-          <div>
-            <img src={logo} alt="" className={style.logo} />
-          </div>
-
-          <div className={style.auth_btns}>
-            <button
-              className={style.login_btn}
-              type="button"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </button>
-            <button
-              className={style.signup_btn}
-              type="button"
-              onClick={() => navigate("/signup")}
-            >
-              Signup
-            </button>
-          </div>
+    <section className={`${style.remaning_content} `}>
+      <div className={style.header}>
+        <div className={style.logo_container}>
+          <img
+            src={logo}
+            alt=""
+            className={style.logo}
+            onClick={() => navigate("/")}
+          />
         </div>
 
-        {isNewChat && (
-          <div className={style.chats}>
-            <h3 className={style.headline}>What can I help with?</h3>
+        <div className={style.auth_btns}>
+          <button
+            className={style.login_btn}
+            type="button"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </button>
+          <button
+            className={style.signup_btn}
+            type="button"
+            onClick={() => navigate("/signup")}
+          >
+            Signup
+          </button>
+        </div>
+      </div>
 
-            <form className={style.search_bar} onSubmit={handleSubmit}>
+      {isNewChat && (
+        <div className={style.chats}>
+          <h3 className={style.headline}>How can we resolve your issue?</h3>
+
+          <form className={style.search_bar} onSubmit={handleSubmit}>
+            <button className={style.additional_btn} type="button">
+              <BiCategoryAlt />
+            </button>
+            <button className={style.additional_btn} type="button">
+              <GoHistory />
+            </button>
+
+            <div className={style.input_box}>
+              <img src={star_icon} alt="" className={style.star_icon} />
               <input
                 type="text"
-                placeholder="Ask me anything"
                 onChange={(e) => setQuestion(e.target.value)}
                 value={question}
                 required
               />
-              <button className={style.search} type="submit">
-                <FaArrowUp color="#fff" />
+
+              <button className={style.send_btn} type="submit">
+                <BsFillSendFill />
               </button>
-            </form>
-          </div>
-        )}
-
-        {!isNewChat && (
-          <div className={`${style.chats} ${style.ai_chats}`}>
-            <div className={style.chats_list} ref={chatContainerRef}>
-              {conversations?.map((item, index) => {
-                if (!item?.content) return null;
-
-                const isLastAiMessage =
-                  item?.role === "ai" &&
-                  currentAiMessage &&
-                  index === conversations?.length - 1;
-
-                if (isLastAiMessage) return null;
-
-                return item?.role === "user" ? (
-                  <p className={style.user_text} key={`user${index}`}>
-                    {item?.content}
-                  </p>
-                ) : (
-                  <div
-                    className={style.ai_text}
-                    key={`ai${index}`}
-                    dangerouslySetInnerHTML={{
-                      __html: item?.content?.replace(/\n/g, "<br/>"),
-                    }}
-                  />
-                );
-              })}
-
-              {currentAiMessage && (
-                <TypeAnimation
-                  sequence={[currentAiMessage]}
-                  wrapper="div"
-                  speed={70}
-                  cursor={false}
-                  className={style.ai_text}
-                  key={currentAiMessage}
-                />
-              )}
             </div>
+            <button className={style.additional_btn} type="button">
+              <FiPlus />
+            </button>
+          </form>
+        </div>
+      )}
 
-            <div className={style.search_container}>
-              <form className={style.search_bar} onSubmit={handleSubmit}>
+      {!isNewChat && (
+        <div className={`${style.chats} ${style.ai_chats}`}>
+          <div className={style.chats_list} ref={chatContainerRef}>
+            {conversations?.map((item, index) => {
+              if (!item?.content) return null;
+
+              const isLastAiMessage =
+                item?.role === "ai" &&
+                currentAiMessage &&
+                index === conversations?.length - 1;
+
+              if (isLastAiMessage) return null;
+
+              return item?.role === "user" ? (
+                <p className={style.user_text} key={`user${index}`}>
+                  {item?.content}
+                </p>
+              ) : (
+                <div
+                  className={style.ai_text}
+                  key={`ai${index}`}
+                  dangerouslySetInnerHTML={{
+                    __html: item?.content?.replace(/\n/g, "<br/>"),
+                  }}
+                />
+              );
+            })}
+
+            {currentAiMessage && (
+              <TypeAnimation
+                sequence={[currentAiMessage]}
+                wrapper="div"
+                speed={70}
+                cursor={false}
+                className={style.ai_text}
+                key={currentAiMessage}
+              />
+            )}
+          </div>
+
+          <div className={style.search_container}>
+            <form className={style.search_bar} onSubmit={handleSubmit}>
+              <button className={style.additional_btn} type="button">
+                <BiCategoryAlt />
+              </button>
+              <button className={style.additional_btn} type="button">
+                <GoHistory />
+              </button>
+
+              <div className={style.input_box}>
+                <img src={star_icon} alt="" className={style.star_icon} />
                 <input
                   type="text"
-                  placeholder="Ask me anything"
                   onChange={(e) => setQuestion(e.target.value)}
                   value={question}
                   required
                 />
-                {loading ? (
-                  <PulseLoader color="#000" size={5} />
-                ) : (
-                  <button className={style.search} type="submit">
-                    <FaArrowUp color="#fff" />
-                  </button>
-                )}
-              </form>
-            </div>
+
+                <button className={style.send_btn} type="submit">
+                  {loading ? (
+                    <PulseLoader color="#fff" size={5} />
+                  ) : (
+                    <BsFillSendFill />
+                  )}
+                </button>
+              </div>
+              <button className={style.additional_btn} type="button">
+                <FiPlus />
+              </button>
+            </form>
           </div>
-        )}
-      </section>
+        </div>
+      )}
     </section>
   );
 };

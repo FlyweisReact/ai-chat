@@ -8,12 +8,11 @@
 .page_container {
   height: 100vh;
   overflow: hidden;
-  /* background: linear-gradient(
-    to bottom,
-    var(--primary-color) 90%,
-    var(--secendory-color) 10%,
-    var(--primary-color) 50%
-  ); */
+  background-image: url("../asset/img/background.png");
+  background-position: center;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   padding: 20px 60px;
   display: flex;
   flex-direction: column;
@@ -21,29 +20,16 @@
   position: relative;
 }
 
-.page_container::before {
-  content: "";
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  width: calc(100% + 20px);
-  height: calc(100% + 20px);
-  background-image: url("https://img.freepik.com/free-photo/glowing-molecular-structure-futuristic-galaxy-backdrop-generated-by-ai_188544-27827.jpg?t=st=1735893226~exp=1735896826~hmac=d5704ce607c746acadb03317c0147298427a3aac314a289d4ae4e08a6c53703d&w=1380");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  filter: blur(6px);
-  z-index: -1;
-}
-
 .header {
   width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
 }
 
 .header .logo_container {
-  max-width: 200px;
+  max-width: 189px;
 }
 .header .logo_container img {
   width: 100%;
@@ -56,6 +42,30 @@
   font-family: Montserrat;
   margin-top: 10px;
 }
+.header .auth_btns {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.header .auth_btns button {
+  width: 124px;
+  line-height: auto;
+  font-size: var(--font-size-small);
+  font-family: Afacad;
+  padding: 10px;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.header .auth_btns button.logIn {
+  background-color: #239453;
+  border: 1px solid #239453;
+}
+.header .auth_btns button.signUp {
+  background-color: transparent;
+  border: 1px solid #fff;
+}
 
 .content {
   flex: 1;
@@ -66,71 +76,173 @@
   gap: 10px;
 }
 
-.content .thumbnail {
-  max-width: 300px;
-  width: auto;
-  height: auto;
-}
-
-.content .text {
-  font-size: var(--font-size-small);
-  font-family: Quicksand;
-  color: #fff;
-  max-width: 1000px;
-  text-align: center;
-  font-weight: 500;
-}
-
-.content .btn_container {
+.glass_effect {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0px;
+  border-radius: 15px;
+  background: transparent;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
-  gap: 10px;
+  gap: 20px;
   align-items: center;
-  margin-top: 10px;
+  position: relative;
+  overflow: visible;
 }
-.content .btn_container button {
+
+.glass_effect .thumbnail {
+  width: 456px;
+  margin-left: -60px; /* Move the thumbnail outside the container */
+  position: relative; /* Keeps it in the document flow */
+  z-index: 1;
+  margin-top: -46px;
+}
+
+.glass_effect .container {
+  flex: 1;
+  width: 100%;
+  padding: 0px 20px;
+  padding-right: 60px;
+}
+.glass_effect .container .headline {
+  font-size: var(--font-size-subheading);
+  font-family: Afacad;
+  font-weight: 500;
+  color: #fff;
+  font-style: italic;
+}
+
+.glass_effect .container .animation_container {
+  position: relative;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.glass_effect .container .query {
+  display: flex;
+  background-color: #000000;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  display: flex;
+  gap: 0px;
+  align-items: center;
   padding: 10px;
-  width: auto;
+  gap: 5px;
+}
+
+.glass_effect .container .query .star_icon {
+  width: 34px;
+}
+.glass_effect .container .query input {
+  flex: 1;
+  width: 100%;
+  padding: 10px;
   outline: none;
-  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  color: #fff;
+  font-family: Afacad;
   font-size: var(--font-size-smaller);
 }
 
-.content .btn_container button.start {
-  background-color: #fff;
-  border: 1px solid #fff;
-  font-family: Quicksand;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.glass_effect .container .query button {
+  background-color: #323232;
+  border: 1px solid #323232;
   border-radius: 5px;
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.content .btn_container button.login_btn {
-  background-color: transparent;
-  border: 1px solid #fff;
-  font-family: Quicksand;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.glass_effect .container .query button svg {
+  font-size: 18px;
   color: #fff;
-  border-radius: 5px;
+}
+
+.description_container {
+  max-width: 1100px;
+  padding: 20px;
+  margin-top: 20px;
+}
+.description_container .description {
+  font-size: var(--font-size-large);
+  font-family: Afacad;
+  font-weight: 300;
+  color: #fff;
+  text-align: center;
+}
+
+.description_container .expert_talk {
+  background-color: #239453;
+  width: 300px;
+  padding: 10px 20px;
+  font-size: var(--font-size-medium-large);
+  font-family: Afacad;
+  border: 1px solid #239453;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 9px;
+  display: block;
+  margin: auto;
+  margin-top: 40px;
+  box-shadow: 0 0 15px #cfdc82, 0 0 40px rgba(35, 148, 83, 0.5);
+  cursor: pointer;
+}
+
+@media (max-width: 575.98px) {
+  .glass_effect .thumbnail {
+    display: none;
+  }
+}
+
+@media (max-width: 980px) {
+  .glass_effect .thumbnail {
+    max-width: 400px;
+    min-width: 200px;
+    width: 100%;
+  }
+  .glass_effect .container {
+    min-width: 400px;
+  }
 }
 
 @media (max-width: 768px) {
-  .page_container{
-    padding: 20px;
+  .page_container {
+    padding: 10px;
   }
-  .header .logo_container{
+  .header .logo_container {
     max-width: 120px;
   }
-  .header .descriptive_text{
-    font-size: var(--font-size-small);
+  .header .auth_btns button {
+    font-size: var(--font-size-smaller);
+    width: 100px;
   }
-  .content .thumbnail{
-    max-width: 200px;
+  .glass_effect {
+    flex-direction: column;
   }
-  .content .text {
-    font-size: var(--font-size-extra-small);
+  .glass_effect .thumbnail {
+    width: 300px;
+  }
+  .glass_effect {
+    padding: 10px;
+  }
+  .glass_effect .container {
+    padding: 0px;
+  }
+  .glass_effect .container .headline {
+    font-size: var(--font-size-large);
+  }
+  .description_container .description,
+  .description_container .expert_talk {
+    font-size: var(--font-size-base);
+  }
+  .glass_effect .container {
+    min-width: auto;
   }
 }
