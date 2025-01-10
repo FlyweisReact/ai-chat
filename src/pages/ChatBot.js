@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import style from "../css/chat.module.css";
-import { FaArrowUp } from "react-icons/fa6";
 import { logo, star_icon } from "../asset";
 import { PulseLoader } from "react-spinners";
 import { TypeAnimation } from "react-type-animation";
@@ -224,7 +223,11 @@ const ChatBot = () => {
             <button className={style.additional_btn} type="button">
               <BiCategoryAlt />
             </button>
-            <button className={style.additional_btn} type="button">
+            <button
+              className={style.additional_btn}
+              type="button"
+              onClick={() => clearChat()}
+            >
               <GoHistory />
             </button>
 
@@ -241,7 +244,14 @@ const ChatBot = () => {
                 <BsFillSendFill />
               </button>
             </div>
-            <button className={style.additional_btn} type="button">
+            <button
+              className={style.additional_btn}
+              type="button"
+              onClick={() => {
+                clearChat();
+                setNewChat(true);
+              }}
+            >
               <FiPlus />
             </button>
           </form>
@@ -293,7 +303,11 @@ const ChatBot = () => {
               <button className={style.additional_btn} type="button">
                 <BiCategoryAlt />
               </button>
-              <button className={style.additional_btn} type="button">
+              <button
+                className={style.additional_btn}
+                type="button"
+                onClick={() => clearChat()}
+              >
                 <GoHistory />
               </button>
 
@@ -314,7 +328,14 @@ const ChatBot = () => {
                   )}
                 </button>
               </div>
-              <button className={style.additional_btn} type="button">
+              <button
+                className={style.additional_btn}
+                type="button"
+                onClick={() => {
+                  clearChat();
+                  setNewChat(true);
+                }}
+              >
                 <FiPlus />
               </button>
             </form>

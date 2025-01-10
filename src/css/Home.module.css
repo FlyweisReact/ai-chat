@@ -7,7 +7,7 @@
 
 .page_container {
   height: 100vh;
-  overflow: hidden;
+  overflow-y: auto;
   background-image: url("../asset/img/background.png");
   background-position: center;
   background-position: center;
@@ -197,7 +197,10 @@
 
 @media (max-width: 575.98px) {
   .glass_effect .thumbnail {
-    display: none;
+    margin-left: 0;
+    margin-top: 0;
+    max-width: 100%;
+    width: auto;
   }
 }
 

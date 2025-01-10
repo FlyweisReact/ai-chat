@@ -88,6 +88,11 @@ const GuestChat = () => {
     }
   }, [conversations]);
 
+  const clearChat = () => {
+    setConversations([]);
+    setCurrentAiMessage("");
+  };
+
   return (
     <section className={`${style.remaning_content} `}>
       <div className={style.header}>
@@ -126,7 +131,11 @@ const GuestChat = () => {
             <button className={style.additional_btn} type="button">
               <BiCategoryAlt />
             </button>
-            <button className={style.additional_btn} type="button">
+            <button
+              className={style.additional_btn}
+              type="button"
+              onClick={() => clearChat()}
+            >
               <GoHistory />
             </button>
 
@@ -143,7 +152,14 @@ const GuestChat = () => {
                 <BsFillSendFill />
               </button>
             </div>
-            <button className={style.additional_btn} type="button">
+            <button
+              className={style.additional_btn}
+              type="button"
+              onClick={() => {
+                setNewChat(true);
+                clearChat();
+              }}
+            >
               <FiPlus />
             </button>
           </form>
@@ -195,7 +211,11 @@ const GuestChat = () => {
               <button className={style.additional_btn} type="button">
                 <BiCategoryAlt />
               </button>
-              <button className={style.additional_btn} type="button">
+              <button
+                className={style.additional_btn}
+                type="button"
+                onClick={() => clearChat()}
+              >
                 <GoHistory />
               </button>
 
@@ -216,7 +236,14 @@ const GuestChat = () => {
                   )}
                 </button>
               </div>
-              <button className={style.additional_btn} type="button">
+              <button
+                className={style.additional_btn}
+                type="button"
+                onClick={() => {
+                  setNewChat(true);
+                  clearChat();
+                }}
+              >
                 <FiPlus />
               </button>
             </form>
