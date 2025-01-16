@@ -17,7 +17,6 @@ import { FiPlus } from "react-icons/fi";
 import { GoHistory } from "react-icons/go";
 import { BsFillSendFill } from "react-icons/bs";
 import { BiCategoryAlt } from "react-icons/bi";
-
 const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
 const ChatBot = () => {
@@ -30,13 +29,14 @@ const ChatBot = () => {
   const [isNewChat, setNewChat] = useState(true);
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
-  const today = new Date().toISOString().split("T")[0]; // Get today's date
+  const today = new Date().toISOString().split("T")[0];
   const [conversations, setConversations] = useState([]);
   const [currentAiMessage, setCurrentAiMessage] = useState("");
+  const chatContainerRef = useRef(null);
 
   const logoutHandler = () => {
     dispatch(LOGOUT());
-    showMsg("", "Logged Out Successfully !", "success");
+    showMsg("", "Logged Out Successfully!", "success");
     navigate("/");
   };
 
@@ -50,14 +50,33 @@ const ChatBot = () => {
     });
   };
 
-  const payload = {
-    model: "gpt-4",
-    messages: [{ role: "user", content: question }],
-  };
-
   const fetchChatGPTResponse = async () => {
     setLoading(true);
+
     try {
+      const systemMessage = {
+        role: "system",
+        content: `You are Lizza AI, developed by Flyweis Technology. You must:
+          - Always identify as Lizza AI in all responses
+          - Never mention or reference other AI companies or models
+          - Maintain a helpful, polite tone
+          - Sign needed responses as 'Lizza AI'`,
+      };
+
+      const formattedConversations = conversations.map((msg) => ({
+        role: msg.role === "ai" ? "assistant" : msg.role,
+        content: msg.content,
+      }));
+
+      const payload = {
+        model: "gpt-3.5-turbo",
+        messages: [
+          systemMessage,
+          ...formattedConversations,
+          { role: "user", content: question },
+        ],
+      };
+
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         payload,
@@ -68,14 +87,22 @@ const ChatBot = () => {
         }
       );
 
-      const aiAnswer =
-        response?.data?.choices?.[0]?.message?.content || "No response found";
+      if (
+        !response.data ||
+        !response.data.choices ||
+        !response.data.choices[0]
+      ) {
+        throw new Error("Invalid response from AI service");
+      }
+
+      const aiAnswer = response.data.choices[0].message.content;
 
       const newConversations = [
         ...conversations,
         { role: "user", content: question },
-        { role: "ai", content: aiAnswer },
+        { role: "assistant", content: aiAnswer },
       ];
+
       const convo = [
         {
           senderType: "User",
@@ -88,66 +115,43 @@ const ChatBot = () => {
           date: today,
         },
       ];
+
       setQuestion("");
       setConversations(newConversations);
       setCurrentAiMessage(aiAnswer);
       saveChatData(convo);
+      setNewChat(false);
     } catch (error) {
       console.error("Error fetching ChatGPT response:", error);
+      showMsg("Error", "Failed to get response from AI", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (conversations?.length > 0) {
-      localStorage.setItem("chat", JSON.stringify(conversations));
-    }
-  }, [conversations]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (question.trim()) {
-      setNewChat(false);
       fetchChatGPTResponse();
     } else {
-      alert("Please enter a question!");
+      showMsg("Warning", "Please enter a question!", "warning");
     }
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isMobile) {
-      setShow(false);
-    }
-  }, [isMobile]);
-
-  const chatContainerRef = useRef(null);
+  const clearChat = () => {
+    setConversations([]);
+    setCurrentAiMessage("");
+    setNewChat(true);
+  };
 
   const scroolToLastChat = () => {
-    chatContainerRef.current.scrollTo({
-      top: chatContainerRef.current.scrollHeight,
-      behavior: "smooth", // Add smooth scrolling
-    });
-  };
-
-  // Scroll to the last message on update
-  useEffect(() => {
     if (chatContainerRef.current) {
-      scroolToLastChat();
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
-  }, [conversations]);
+  };
 
   const fetchProfile = useCallback(() => {
     if (isLoggedIn) {
@@ -158,17 +162,41 @@ const ChatBot = () => {
   }, [isLoggedIn]);
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      setShow(false);
+    }
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (conversations?.length > 0) {
+      localStorage.setItem("chat", JSON.stringify(conversations));
+    }
+  }, [conversations]);
+
+  useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
-  // Menu Options
+  useEffect(() => {
+    scroolToLastChat();
+  }, [conversations]);
+
   const menuOptions = [
     {
       label: (
         <button
           className={style.log_out_btn}
           type="button"
-          onClick={() => logoutHandler()}
+          onClick={logoutHandler}
         >
           <IoIosLogOut color="#fff" size={20} />
           Log out
@@ -178,18 +206,13 @@ const ChatBot = () => {
     },
   ];
 
-  const clearChat = () => {
-    setConversations([]);
-    setCurrentAiMessage("");
-  };
-
   return (
     <section className={`${style.remaning_content}`}>
       <div className={style.header}>
         <div className={style.logo_container}>
           <img
             src={logo}
-            alt=""
+            alt="Logo"
             className={style.logo}
             onClick={() => navigate("/")}
           />
@@ -215,7 +238,7 @@ const ChatBot = () => {
         </ConfigProvider>
       </div>
 
-      {isNewChat && (
+      {isNewChat ? (
         <div className={style.chats}>
           <h3 className={style.headline}>How can we resolve your issue?</h3>
 
@@ -226,46 +249,50 @@ const ChatBot = () => {
             <button
               className={style.additional_btn}
               type="button"
-              onClick={() => clearChat()}
+              onClick={clearChat}
             >
               <GoHistory />
             </button>
 
             <div className={style.input_box}>
-              <img src={star_icon} alt="" className={style.star_icon} />
+              <img src={star_icon} alt="Star" className={style.star_icon} />
               <input
                 type="text"
                 onChange={(e) => setQuestion(e.target.value)}
                 value={question}
+                placeholder="Type your message here..."
                 required
               />
 
-              <button className={style.send_btn} type="submit">
-                <BsFillSendFill />
+              <button
+                className={style.send_btn}
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? (
+                  <PulseLoader color="#fff" size={5} />
+                ) : (
+                  <BsFillSendFill />
+                )}
               </button>
             </div>
             <button
               className={style.additional_btn}
               type="button"
-              onClick={() => {
-                clearChat();
-                setNewChat(true);
-              }}
+              onClick={clearChat}
             >
               <FiPlus />
             </button>
           </form>
         </div>
-      )}
-
-      {!isNewChat && (
+      ) : (
         <div className={`${style.chats} ${style.ai_chats}`}>
           <div className={style.chats_list} ref={chatContainerRef}>
             {conversations?.map((item, index) => {
               if (!item?.content) return null;
 
               const isLastAiMessage =
-                item?.role === "ai" &&
+                item?.role === "assistant" &&
                 currentAiMessage &&
                 index === conversations?.length - 1;
 
@@ -306,21 +333,26 @@ const ChatBot = () => {
               <button
                 className={style.additional_btn}
                 type="button"
-                onClick={() => clearChat()}
+                onClick={clearChat}
               >
                 <GoHistory />
               </button>
 
               <div className={style.input_box}>
-                <img src={star_icon} alt="" className={style.star_icon} />
+                <img src={star_icon} alt="Star" className={style.star_icon} />
                 <input
                   type="text"
                   onChange={(e) => setQuestion(e.target.value)}
                   value={question}
+                  placeholder="Type your message here..."
                   required
                 />
 
-                <button className={style.send_btn} type="submit">
+                <button
+                  className={style.send_btn}
+                  type="submit"
+                  disabled={loading}
+                >
                   {loading ? (
                     <PulseLoader color="#fff" size={5} />
                   ) : (
@@ -331,10 +363,7 @@ const ChatBot = () => {
               <button
                 className={style.additional_btn}
                 type="button"
-                onClick={() => {
-                  clearChat();
-                  setNewChat(true);
-                }}
+                onClick={clearChat}
               >
                 <FiPlus />
               </button>

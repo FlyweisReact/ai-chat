@@ -13,8 +13,7 @@ import { FiPlus } from "react-icons/fi";
 import { GoHistory } from "react-icons/go";
 import { BsFillSendFill } from "react-icons/bs";
 
-const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
-
+const apiKey = process.env.REACT_APP_OPENAI_API_KEY
 const GuestChat = () => {
   const navigate = useNavigate();
   const [isNewChat, setNewChat] = useState(true);
@@ -30,7 +29,38 @@ const GuestChat = () => {
 
   const askQuestion = async () => {
     setLoading(true);
+
     try {
+      // Define system message for consistent Lizza AI branding
+      const systemMessage = {
+        role: "system",
+        content: `You are Lizza AI, developed by Flyweis Technology. You must:
+          - Always identify as Lizza AI in all responses
+          - Never mention or reference other AI companies or models
+          - Maintain a helpful, polite tone
+          - Sign all responses as 'Lizza AI'`,
+      };
+
+      // Construct the messages array with system message
+      const messages = [
+        systemMessage,
+        ...conversations.map((msg) => ({
+          role: msg.role === "ai" ? "assistant" : msg.role,
+          content: msg.content,
+        })),
+        { role: "user", content: question },
+      ];
+
+      // Construct the payload with personality parameters
+      const payload = {
+        model: "gpt-3.5-turbo",
+        messages,
+        temperature: 0.7,
+        presence_penalty: 0.6,
+        frequency_penalty: 0.6,
+        max_tokens: 2000,
+      };
+
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         payload,
@@ -40,23 +70,56 @@ const GuestChat = () => {
           },
         }
       );
-      const aiAnswer =
-        response?.data?.choices?.[0]?.message?.content || "No response found";
+
+      // Extract and process the AI response
+      let aiAnswer =
+        response?.data?.choices?.[0]?.message?.content ||
+        "I apologize, but I couldn't generate a response at the moment. - Lizza AI";
+
+      // Replace any potential mentions of other AI systems
+      const replacements = {
+        GPT: "Lizza AI",
+        ChatGPT: "Lizza AI",
+        OpenAI: "Flyweis Technology",
+        "AI language model": "Lizza AI",
+        "AI assistant": "Lizza AI",
+        "chat assistant": "Lizza AI",
+      };
+
+      Object.entries(replacements).forEach(([key, value]) => {
+        const regex = new RegExp(key, "gi");
+        aiAnswer = aiAnswer.replace(regex, value);
+      });
+
+      // Ensure response is signed appropriately
+      if (!aiAnswer.toLowerCase().includes("lizza ai")) {
+        aiAnswer = `${aiAnswer}\n\n- Lizza AI`;
+      }
+
+      // Update conversation state
       const newConversations = [
         ...conversations,
         { role: "user", content: question },
         { role: "ai", content: aiAnswer },
       ];
+
+      // Reset and update states
       setQuestion("");
       setConversations(newConversations);
       setCurrentAiMessage(aiAnswer);
     } catch (error) {
+      console.error("Error in Lizza AI response:", error);
+
+      const errorMessage =
+        "I apologize, but I'm having trouble responding right now. Please try again in a moment. - Lizza AI";
+
       showMsg(
-        "",
-        "We encountered an issue. Please refresh the page or try again later.",
+        "Connection Issue",
+        "We encountered an issue connecting to Lizza AI. Please refresh the page or try again later.",
         "danger"
       );
-      setCurrentAiMessage("No Response found");
+
+      setCurrentAiMessage(errorMessage);
     } finally {
       setLoading(false);
     }
